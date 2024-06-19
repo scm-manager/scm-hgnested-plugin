@@ -23,39 +23,32 @@
  */
 
 
-
-
-
 package sonia.scm.hgnested;
 
 //~--- non-JDK imports --------------------------------------------------------
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import sonia.scm.plugin.ext.Extension;
 import sonia.scm.repository.Repository;
 import sonia.scm.repository.RepositoryException;
 import sonia.scm.repository.RepositoryRequestListener;
 import sonia.scm.util.HttpUtil;
 
-//~--- JDK imports ------------------------------------------------------------
-
 import java.io.IOException;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-
 /**
- *
  * @author Sebastian Sdorra
  */
 @Extension
 public class HgNestedRepositoryRequestListener
-        implements RepositoryRequestListener, HgNested
-{
+  implements RepositoryRequestListener, HgNested {
 
-  /** the logger for HgNestedRepositoryRequestListener */
+  /**
+   * the logger for HgNestedRepositoryRequestListener
+   */
   private static final Logger logger =
     LoggerFactory.getLogger(HgNestedRepositoryRequestListener.class);
 
@@ -64,12 +57,9 @@ public class HgNestedRepositoryRequestListener
   /**
    * Method description
    *
-   *
    * @param request
    * @param response
    * @param repository
-   *
-   *
    * @return
    * @throws IOException
    * @throws RepositoryException
@@ -78,57 +68,46 @@ public class HgNestedRepositoryRequestListener
   public boolean handleRequest(HttpServletRequest request,
                                HttpServletResponse response,
                                Repository repository)
-          throws IOException, RepositoryException
-  {
+    throws IOException, RepositoryException {
     boolean process = true;
     String uri = request.getRequestURI();
 
-    if (TYPE.equals(repository.getType()))
-    {
+    if (TYPE.equals(repository.getType())) {
       String repoPath = getRepositoryPath(repository);
 
-      if (!uri.endsWith(repoPath))
-      {
-        if (logger.isTraceEnabled())
-        {
+      if (!uri.endsWith(repoPath)) {
+        if (logger.isTraceEnabled()) {
           logger.trace("check repository {} for nested request at uri {}",
-                       repository.getName(), uri);
+            repository.getName(), uri);
         }
 
         HgNestedConfiguration config = new HgNestedConfiguration(repository);
 
-        if (config.isNestedRepositoryConfigured())
-        {
+        if (config.isNestedRepositoryConfigured()) {
           String module = uri.substring(uri.indexOf(repoPath)
-                                        + repoPath.length());
+            + repoPath.length());
 
           module = HttpUtil.getUriWithoutStartSeperator(module);
           module = HttpUtil.getUriWithoutEndSeperator(module);
 
           HgNestedRepository r = config.getNestedRepository(module);
 
-          if (r != null)
-          {
+          if (r != null) {
             String url = HgNestedUtil.createUrl(request, r);
 
-            if (logger.isDebugEnabled())
-            {
+            if (logger.isDebugEnabled()) {
               logger.debug("send redirect to {}", url);
             }
 
             response.sendRedirect(url);
             process = false;
-          }
-          else if (logger.isDebugEnabled())
-          {
+          } else if (logger.isDebugEnabled()) {
             logger.debug("no nested repository configured for module {} at {}",
-                        module, repository.getName());
+              module, repository.getName());
           }
-        }
-        else if (logger.isDebugEnabled())
-        {
+        } else if (logger.isDebugEnabled()) {
           logger.debug("no nested repository defined for {}",
-                      repository.getName());
+            repository.getName());
         }
       }
     }
@@ -141,15 +120,12 @@ public class HgNestedRepositoryRequestListener
   /**
    * Method description
    *
-   *
    * @param repository
-   *
    * @return
    */
-  private String getRepositoryPath(Repository repository)
-  {
-    return new StringBuilder(HttpUtil.SEPARATOR_PATH).append(
-        repository.getType()).append(HttpUtil.SEPARATOR_PATH).append(
-        repository.getName()).toString();
+  private String getRepositoryPath(Repository repository) {
+    return String.valueOf(HttpUtil.SEPARATOR_PATH) +
+      repository.getType() + HttpUtil.SEPARATOR_PATH +
+      repository.getName();
   }
 }

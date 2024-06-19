@@ -23,35 +23,31 @@
  */
 
 
-
-
-
 package sonia.scm.hgnested;
 
 //~--- non-JDK imports --------------------------------------------------------
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import sonia.scm.repository.Repository;
 import sonia.scm.util.Util;
-
-//~--- JDK imports ------------------------------------------------------------
 
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- *
  * @author Sebastian Sdorra
  */
-public class HgNestedConfiguration
-{
+public class HgNestedConfiguration {
 
-  /** Field description */
+  /**
+   * Field description
+   */
   public static final String PROPERTY_HGNESTED = "hgnested.repositories";
 
-  /** the logger for HgNestedConfiguration */
+  /**
+   * the logger for HgNestedConfiguration
+   */
   private static final Logger logger =
     LoggerFactory.getLogger(HgNestedConfiguration.class);
 
@@ -60,21 +56,16 @@ public class HgNestedConfiguration
   /**
    * Constructs ...
    *
-   *
    * @param repository
    */
-  public HgNestedConfiguration(Repository repository)
-  {
+  public HgNestedConfiguration(Repository repository) {
     String value = repository.getProperty(PROPERTY_HGNESTED);
 
-    if (Util.isNotEmpty(value))
-    {
+    if (Util.isNotEmpty(value)) {
       parseNestedRepositories(value);
-    }
-    else if (logger.isDebugEnabled())
-    {
+    } else if (logger.isDebugEnabled()) {
       logger.debug("no nested repositories are defined for repository {}",
-                   repository.getName());
+        repository.getName());
     }
   }
 
@@ -83,24 +74,19 @@ public class HgNestedConfiguration
   /**
    * Method description
    *
-   *
    * @param path
-   *
    * @return
    */
-  public HgNestedRepository getNestedRepository(String path)
-  {
+  public HgNestedRepository getNestedRepository(String path) {
     return nestedRepositoryMap.get(path);
   }
 
   /**
    * Method description
    *
-   *
    * @return
    */
-  public boolean isNestedRepositoryConfigured()
-  {
+  public boolean isNestedRepositoryConfigured() {
     return Util.isNotEmpty(nestedRepositoryMap);
   }
 
@@ -109,15 +95,12 @@ public class HgNestedConfiguration
   /**
    * Method description
    *
-   *
    * @param value
    */
-  private void parseNestedRepositories(String value)
-  {
+  private void parseNestedRepositories(String value) {
     String[] values = value.split(";");
 
-    for (String v : values)
-    {
+    for (String v : values) {
       parseNestedRepository(v);
     }
   }
@@ -125,26 +108,19 @@ public class HgNestedConfiguration
   /**
    * Method description
    *
-   *
    * @param value
    */
-  private void parseNestedRepository(String value)
-  {
+  private void parseNestedRepository(String value) {
     value = value.trim();
 
     String[] values = value.split("=");
 
-    if (values.length != 2)
-    {
-      if (logger.isWarnEnabled())
-      {
+    if (values.length != 2) {
+      if (logger.isWarnEnabled()) {
         logger.warn("wrong length detected");
       }
-    }
-    else
-    {
-      if (nestedRepositoryMap == null)
-      {
+    } else {
+      if (nestedRepositoryMap == null) {
         nestedRepositoryMap = new HashMap<String, HgNestedRepository>();
       }
 
@@ -152,8 +128,7 @@ public class HgNestedConfiguration
       String url = values[1].trim();
       HgNestedRepository repo = new HgNestedRepository(name, url);
 
-      if (logger.isDebugEnabled())
-      {
+      if (logger.isDebugEnabled()) {
         logger.debug("append nested repository: {}", repo);
       }
 
@@ -163,6 +138,8 @@ public class HgNestedConfiguration
 
   //~--- fields ---------------------------------------------------------------
 
-  /** Field description */
+  /**
+   * Field description
+   */
   private Map<String, HgNestedRepository> nestedRepositoryMap;
 }

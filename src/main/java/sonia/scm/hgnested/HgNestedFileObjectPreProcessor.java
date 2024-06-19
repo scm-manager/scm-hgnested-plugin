@@ -23,32 +23,25 @@
  */
 
 
-
-
-
 package sonia.scm.hgnested;
 
 //~--- non-JDK imports --------------------------------------------------------
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import sonia.scm.repository.FileObject;
 import sonia.scm.repository.FileObjectPreProcessor;
 import sonia.scm.repository.SubRepository;
 
-//~--- JDK imports ------------------------------------------------------------
-
-import jakarta.servlet.http.HttpServletRequest;
-
 /**
- *
  * @author Sebastian Sdorra
  */
-public class HgNestedFileObjectPreProcessor implements FileObjectPreProcessor
-{
+public class HgNestedFileObjectPreProcessor implements FileObjectPreProcessor {
 
-  /** the logger for HgNestedFileObjectPreProcessor */
+  /**
+   * the logger for HgNestedFileObjectPreProcessor
+   */
   private static final Logger logger =
     LoggerFactory.getLogger(HgNestedFileObjectPreProcessor.class);
 
@@ -57,13 +50,11 @@ public class HgNestedFileObjectPreProcessor implements FileObjectPreProcessor
   /**
    * Constructs ...
    *
-   *
    * @param configuration
    * @param request
    */
   public HgNestedFileObjectPreProcessor(HgNestedConfiguration configuration,
-          HttpServletRequest request)
-  {
+                                        HttpServletRequest request) {
     this.configuration = configuration;
     this.request = request;
   }
@@ -73,58 +64,52 @@ public class HgNestedFileObjectPreProcessor implements FileObjectPreProcessor
   /**
    * Method description
    *
-   *
    * @param fo
    */
   @Override
-  public void process(FileObject fo)
-  {
-    if (configuration.isNestedRepositoryConfigured())
-    {
-      if (logger.isTraceEnabled())
-      {
+  public void process(FileObject fo) {
+    if (configuration.isNestedRepositoryConfigured()) {
+      if (logger.isTraceEnabled()) {
         logger.trace("check file object {} for nested repository",
-                     fo.getPath());
+          fo.getPath());
       }
 
       SubRepository sub = fo.getSubRepository();
 
-      if (sub != null)
-      {
-        if (logger.isTraceEnabled())
-        {
+      if (sub != null) {
+        if (logger.isTraceEnabled()) {
           logger.trace("check sub repository {} for nested repository",
-                       fo.getPath());
+            fo.getPath());
         }
 
         HgNestedRepository repository =
           configuration.getNestedRepository(fo.getPath());
 
-        if (repository != null)
-        {
+        if (repository != null) {
           String url = HgNestedUtil.createUrl(request, repository);
 
-          if (logger.isDebugEnabled())
-          {
+          if (logger.isDebugEnabled()) {
             logger.debug("set sub repsoitory url to {}", url);
           }
 
           sub.setRepositoryUrl(url);
         }
       }
-    }
-    else if (logger.isTraceEnabled())
-    {
+    } else if (logger.isTraceEnabled()) {
       logger.trace(
-          "skip nested repository check, because no nested repository is configured");
+        "skip nested repository check, because no nested repository is configured");
     }
   }
 
   //~--- fields ---------------------------------------------------------------
 
-  /** Field description */
-  private HgNestedConfiguration configuration;
+  /**
+   * Field description
+   */
+  private final HgNestedConfiguration configuration;
 
-  /** Field description */
-  private HttpServletRequest request;
+  /**
+   * Field description
+   */
+  private final HttpServletRequest request;
 }

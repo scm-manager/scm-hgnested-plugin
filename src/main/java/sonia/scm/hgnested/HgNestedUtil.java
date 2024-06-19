@@ -23,9 +23,6 @@
  */
 
 
-
-
-
 package sonia.scm.hgnested;
 
 //~--- JDK imports ------------------------------------------------------------
@@ -33,36 +30,29 @@ package sonia.scm.hgnested;
 import jakarta.servlet.http.HttpServletRequest;
 
 /**
- *
  * @author Sebastian Sdorra
  */
-public class HgNestedUtil
-{
+public class HgNestedUtil {
 
   /**
    * Method description
    *
-   *
    * @param request
    * @param r
-   *
    * @return
    */
   public static String createUrl(HttpServletRequest request,
-                                 HgNestedRepository r)
-  {
+                                 HgNestedRepository r) {
     String url = r.getUrl();
 
-    if (!url.startsWith("http"))
-    {
+    if (!url.startsWith("http")) {
       StringBuilder buffer = new StringBuilder(request.getScheme());
 
       buffer.append("://").append(request.getServerName()).append(":");
       buffer.append(String.valueOf(request.getServerPort()));
       buffer.append(request.getContextPath()).append("/hg");
 
-      if (!url.startsWith("/"))
-      {
+      if (!url.startsWith("/")) {
         buffer.append("/");
       }
 
@@ -70,8 +60,7 @@ public class HgNestedUtil
 
       String query = request.getQueryString();
 
-      if (query != null)
-      {
+      if (query != null) {
         buffer.append("?").append(query);
       }
 

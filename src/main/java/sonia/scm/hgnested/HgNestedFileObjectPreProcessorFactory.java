@@ -23,38 +23,30 @@
  */
 
 
-
-
-
 package sonia.scm.hgnested;
 
 //~--- non-JDK imports --------------------------------------------------------
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
-
+import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import sonia.scm.plugin.ext.Extension;
 import sonia.scm.repository.FileObjectPreProcessor;
 import sonia.scm.repository.FileObjectPreProcessorFactory;
 import sonia.scm.repository.Repository;
 
-//~--- JDK imports ------------------------------------------------------------
-
-import jakarta.servlet.http.HttpServletRequest;
-
 /**
- *
  * @author Sebastian Sdorra
  */
 @Extension
 public class HgNestedFileObjectPreProcessorFactory
-        implements FileObjectPreProcessorFactory
-{
+  implements FileObjectPreProcessorFactory {
 
-  /** the logger for HgNestedFileObjectPreProcessorFactory */
+  /**
+   * the logger for HgNestedFileObjectPreProcessorFactory
+   */
   private static final Logger logger =
     LoggerFactory.getLogger(HgNestedFileObjectPreProcessorFactory.class);
 
@@ -63,13 +55,11 @@ public class HgNestedFileObjectPreProcessorFactory
   /**
    * Constructs ...
    *
-   *
    * @param requestProvider
    */
   @Inject
   public HgNestedFileObjectPreProcessorFactory(
-          Provider<HttpServletRequest> requestProvider)
-  {
+    Provider<HttpServletRequest> requestProvider) {
     this.requestProvider = requestProvider;
   }
 
@@ -78,18 +68,14 @@ public class HgNestedFileObjectPreProcessorFactory
   /**
    * Method description
    *
-   *
    * @param repository
-   *
    * @return
    */
   @Override
-  public FileObjectPreProcessor createPreProcessor(Repository repository)
-  {
-    if (logger.isTraceEnabled())
-    {
+  public FileObjectPreProcessor createPreProcessor(Repository repository) {
+    if (logger.isTraceEnabled()) {
       logger.trace("create file object pre processor for repository {}",
-                   repository.getName());
+        repository.getName());
     }
 
     HgNestedConfiguration config = new HgNestedConfiguration(repository);
@@ -99,6 +85,8 @@ public class HgNestedFileObjectPreProcessorFactory
 
   //~--- fields ---------------------------------------------------------------
 
-  /** Field description */
-  private Provider<HttpServletRequest> requestProvider;
+  /**
+   * Field description
+   */
+  private final Provider<HttpServletRequest> requestProvider;
 }

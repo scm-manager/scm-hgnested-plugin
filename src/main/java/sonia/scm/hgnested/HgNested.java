@@ -23,18 +23,15 @@
  */
 
 
-
-
-
 package sonia.scm.hgnested;
 
 /**
- *
  * @author Sebastian Sdorra
  */
-public interface HgNested
-{
+public interface HgNested {
 
-  /** Field description */
-  public static final String TYPE = "hg";
+  /**
+   * Field description
+   */
+  String TYPE = "hg";
 }

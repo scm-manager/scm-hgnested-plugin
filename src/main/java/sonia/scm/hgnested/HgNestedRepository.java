@@ -23,9 +23,6 @@
  */
 
 
-
-
-
 package sonia.scm.hgnested;
 
 //~--- JDK imports ------------------------------------------------------------
@@ -35,40 +32,34 @@ import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlRootElement;
 
 /**
- *
  * @author Sebastian Sdorra
  */
 @XmlRootElement(name = "repository")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class HgNestedRepository
-{
+public class HgNestedRepository {
 
   /**
    * Constructs ...
-   *
    */
-  public HgNestedRepository() {}
+  public HgNestedRepository() {
+  }
 
   /**
    * Constructs ...
-   *
    *
    * @param url
    */
-  public HgNestedRepository(String url)
-  {
+  public HgNestedRepository(String url) {
     this.url = url;
   }
 
   /**
    * Constructs ...
    *
-   *
    * @param name
    * @param url
    */
-  public HgNestedRepository(String name, String url)
-  {
+  public HgNestedRepository(String name, String url) {
     this.name = name;
     this.url = url;
   }
@@ -78,30 +69,30 @@ public class HgNestedRepository
   /**
    * Method description
    *
-   *
    * @return
    */
-  public String getName()
-  {
+  public String getName() {
     return name;
   }
 
   /**
    * Method description
    *
-   *
    * @return
    */
-  public String getUrl()
-  {
+  public String getUrl() {
     return url;
   }
 
   //~--- fields ---------------------------------------------------------------
 
-  /** Field description */
+  /**
+   * Field description
+   */
   private String name;
 
-  /** Field description */
+  /**
+   * Field description
+   */
   private String url;
 }
