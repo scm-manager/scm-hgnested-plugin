@@ -22,19 +22,10 @@
  * SOFTWARE.
  */
 
+describe("frontend unit tests", () => {
 
+  it("some test", () => {
+    expect( 21 * 2 ).toBe(42);
+  });
 
-
-
-package sonia.scm.hgnested;
-
-/**
- *
- * @author Sebastian Sdorra
- */
-public interface HgNested
-{
-
-  /** Field description */
-  public static final String TYPE = "hg";
-}
+});

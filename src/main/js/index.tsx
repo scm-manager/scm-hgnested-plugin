@@ -22,19 +22,6 @@
  * SOFTWARE.
  */
 
+import { binder } from "@scm-manager/ui-extensions";
 
-
-
-
-package sonia.scm.hgnested;
-
-/**
- *
- * @author Sebastian Sdorra
- */
-public interface HgNested
-{
-
-  /** Field description */
-  public static final String TYPE = "hg";
-}
+binder.bind("", "");
