@@ -44,7 +44,7 @@ import sonia.scm.repository.SubRepository;
 
 //~--- JDK imports ------------------------------------------------------------
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  *

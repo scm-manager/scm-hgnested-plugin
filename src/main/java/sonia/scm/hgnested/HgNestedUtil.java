@@ -35,7 +35,7 @@ package sonia.scm.hgnested;
 
 //~--- JDK imports ------------------------------------------------------------
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  *
