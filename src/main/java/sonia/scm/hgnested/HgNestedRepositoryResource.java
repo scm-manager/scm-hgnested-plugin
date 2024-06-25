@@ -24,8 +24,6 @@
 
 package sonia.scm.hgnested;
 
-//~--- non-JDK imports --------------------------------------------------------
-
 import com.google.inject.Inject;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
@@ -43,38 +41,23 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-/**
- * @author Sebastian Sdorra
- */
 @Path("plugins/hgnested/repositories")
 public class HgNestedRepositoryResource implements HgNested {
 
-  /**
-   * Constructs ...
-   *
-   * @param repositoryManager
-   */
+  private final RepositoryManager repositoryManager;
+
   @Inject
   public HgNestedRepositoryResource(RepositoryManager repositoryManager) {
     this.repositoryManager = repositoryManager;
   }
 
-  //~--- get methods ----------------------------------------------------------
-
-  /**
-   * Method description
-   *
-   * @param currentRepository
-   * @param query
-   * @return
-   */
   @GET
   @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
   public Response getRepositories(
     @QueryParam("repository") String currentRepository,
     @QueryParam("query") String query) {
     List<HgNestedRepository> nestedRepositories =
-      new ArrayList<HgNestedRepository>();
+      new ArrayList<>();
     Collection<Repository> repositories = repositoryManager.getAll();
     SearchRequest request = null;
 
@@ -101,11 +84,4 @@ public class HgNestedRepositoryResource implements HgNested {
 
     return Response.ok(new HgNestedRepositories(nestedRepositories)).build();
   }
-
-  //~--- fields ---------------------------------------------------------------
-
-  /**
-   * Field description
-   */
-  private final RepositoryManager repositoryManager;
 }

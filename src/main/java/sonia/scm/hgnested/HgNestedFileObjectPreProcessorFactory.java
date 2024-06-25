@@ -22,55 +22,31 @@
  * SOFTWARE.
  */
 
-
 package sonia.scm.hgnested;
-
-//~--- non-JDK imports --------------------------------------------------------
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sonia.scm.plugin.ext.Extension;
+import sonia.scm.plugin.Extension;
 import sonia.scm.repository.FileObjectPreProcessor;
 import sonia.scm.repository.FileObjectPreProcessorFactory;
 import sonia.scm.repository.Repository;
 
-/**
- * @author Sebastian Sdorra
- */
 @Extension
 public class HgNestedFileObjectPreProcessorFactory
   implements FileObjectPreProcessorFactory {
 
-  /**
-   * the logger for HgNestedFileObjectPreProcessorFactory
-   */
   private static final Logger logger =
     LoggerFactory.getLogger(HgNestedFileObjectPreProcessorFactory.class);
 
-  //~--- constructors ---------------------------------------------------------
-
-  /**
-   * Constructs ...
-   *
-   * @param requestProvider
-   */
   @Inject
   public HgNestedFileObjectPreProcessorFactory(
     Provider<HttpServletRequest> requestProvider) {
     this.requestProvider = requestProvider;
   }
 
-  //~--- methods --------------------------------------------------------------
-
-  /**
-   * Method description
-   *
-   * @param repository
-   * @return
-   */
   @Override
   public FileObjectPreProcessor createPreProcessor(Repository repository) {
     if (logger.isTraceEnabled()) {
@@ -83,10 +59,5 @@ public class HgNestedFileObjectPreProcessorFactory
     return new HgNestedFileObjectPreProcessor(config, requestProvider.get());
   }
 
-  //~--- fields ---------------------------------------------------------------
-
-  /**
-   * Field description
-   */
   private final Provider<HttpServletRequest> requestProvider;
 }

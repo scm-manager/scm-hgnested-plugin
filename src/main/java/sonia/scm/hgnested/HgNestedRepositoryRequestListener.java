@@ -22,53 +22,31 @@
  * SOFTWARE.
  */
 
-
 package sonia.scm.hgnested;
-
-//~--- non-JDK imports --------------------------------------------------------
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sonia.scm.plugin.ext.Extension;
+import sonia.scm.plugin.Extension;
 import sonia.scm.repository.Repository;
-import sonia.scm.repository.RepositoryException;
 import sonia.scm.repository.RepositoryRequestListener;
 import sonia.scm.util.HttpUtil;
 
 import java.io.IOException;
 
-/**
- * @author Sebastian Sdorra
- */
 @Extension
 public class HgNestedRepositoryRequestListener
   implements RepositoryRequestListener, HgNested {
 
-  /**
-   * the logger for HgNestedRepositoryRequestListener
-   */
   private static final Logger logger =
     LoggerFactory.getLogger(HgNestedRepositoryRequestListener.class);
 
-  //~--- methods --------------------------------------------------------------
-
-  /**
-   * Method description
-   *
-   * @param request
-   * @param response
-   * @param repository
-   * @return
-   * @throws IOException
-   * @throws RepositoryException
-   */
   @Override
   public boolean handleRequest(HttpServletRequest request,
                                HttpServletResponse response,
                                Repository repository)
-    throws IOException, RepositoryException {
+    throws IOException {
     boolean process = true;
     String uri = request.getRequestURI();
 
@@ -115,16 +93,8 @@ public class HgNestedRepositoryRequestListener
     return process;
   }
 
-  //~--- get methods ----------------------------------------------------------
-
-  /**
-   * Method description
-   *
-   * @param repository
-   * @return
-   */
   private String getRepositoryPath(Repository repository) {
-    return String.valueOf(HttpUtil.SEPARATOR_PATH) +
+    return HttpUtil.SEPARATOR_PATH +
       repository.getType() + HttpUtil.SEPARATOR_PATH +
       repository.getName();
   }

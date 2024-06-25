@@ -22,10 +22,7 @@
  * SOFTWARE.
  */
 
-
 package sonia.scm.hgnested;
-
-//~--- non-JDK imports --------------------------------------------------------
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
@@ -34,38 +31,20 @@ import sonia.scm.repository.FileObject;
 import sonia.scm.repository.FileObjectPreProcessor;
 import sonia.scm.repository.SubRepository;
 
-/**
- * @author Sebastian Sdorra
- */
 public class HgNestedFileObjectPreProcessor implements FileObjectPreProcessor {
 
-  /**
-   * the logger for HgNestedFileObjectPreProcessor
-   */
   private static final Logger logger =
     LoggerFactory.getLogger(HgNestedFileObjectPreProcessor.class);
 
-  //~--- constructors ---------------------------------------------------------
+  private final HgNestedConfiguration configuration;
+  private final HttpServletRequest request;
 
-  /**
-   * Constructs ...
-   *
-   * @param configuration
-   * @param request
-   */
   public HgNestedFileObjectPreProcessor(HgNestedConfiguration configuration,
                                         HttpServletRequest request) {
     this.configuration = configuration;
     this.request = request;
   }
 
-  //~--- methods --------------------------------------------------------------
-
-  /**
-   * Method description
-   *
-   * @param fo
-   */
   @Override
   public void process(FileObject fo) {
     if (configuration.isNestedRepositoryConfigured()) {
@@ -100,16 +79,4 @@ public class HgNestedFileObjectPreProcessor implements FileObjectPreProcessor {
         "skip nested repository check, because no nested repository is configured");
     }
   }
-
-  //~--- fields ---------------------------------------------------------------
-
-  /**
-   * Field description
-   */
-  private final HgNestedConfiguration configuration;
-
-  /**
-   * Field description
-   */
-  private final HttpServletRequest request;
 }

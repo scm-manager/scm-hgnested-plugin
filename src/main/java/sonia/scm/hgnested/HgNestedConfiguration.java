@@ -22,10 +22,7 @@
  * SOFTWARE.
  */
 
-
 package sonia.scm.hgnested;
-
-//~--- non-JDK imports --------------------------------------------------------
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,29 +32,15 @@ import sonia.scm.util.Util;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * @author Sebastian Sdorra
- */
 public class HgNestedConfiguration {
 
-  /**
-   * Field description
-   */
   public static final String PROPERTY_HGNESTED = "hgnested.repositories";
 
-  /**
-   * the logger for HgNestedConfiguration
-   */
+  private Map<String, HgNestedRepository> nestedRepositoryMap;
+
   private static final Logger logger =
     LoggerFactory.getLogger(HgNestedConfiguration.class);
 
-  //~--- constructors ---------------------------------------------------------
-
-  /**
-   * Constructs ...
-   *
-   * @param repository
-   */
   public HgNestedConfiguration(Repository repository) {
     String value = repository.getProperty(PROPERTY_HGNESTED);
 
@@ -69,34 +52,14 @@ public class HgNestedConfiguration {
     }
   }
 
-  //~--- get methods ----------------------------------------------------------
-
-  /**
-   * Method description
-   *
-   * @param path
-   * @return
-   */
   public HgNestedRepository getNestedRepository(String path) {
     return nestedRepositoryMap.get(path);
   }
 
-  /**
-   * Method description
-   *
-   * @return
-   */
   public boolean isNestedRepositoryConfigured() {
     return Util.isNotEmpty(nestedRepositoryMap);
   }
 
-  //~--- methods --------------------------------------------------------------
-
-  /**
-   * Method description
-   *
-   * @param value
-   */
   private void parseNestedRepositories(String value) {
     String[] values = value.split(";");
 
@@ -105,11 +68,6 @@ public class HgNestedConfiguration {
     }
   }
 
-  /**
-   * Method description
-   *
-   * @param value
-   */
   private void parseNestedRepository(String value) {
     value = value.trim();
 
@@ -121,7 +79,7 @@ public class HgNestedConfiguration {
       }
     } else {
       if (nestedRepositoryMap == null) {
-        nestedRepositoryMap = new HashMap<String, HgNestedRepository>();
+        nestedRepositoryMap = new HashMap<>();
       }
 
       String name = values[0].trim();
@@ -135,11 +93,4 @@ public class HgNestedConfiguration {
       nestedRepositoryMap.put(name, repo);
     }
   }
-
-  //~--- fields ---------------------------------------------------------------
-
-  /**
-   * Field description
-   */
-  private Map<String, HgNestedRepository> nestedRepositoryMap;
 }
