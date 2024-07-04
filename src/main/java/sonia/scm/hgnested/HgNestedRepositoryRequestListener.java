@@ -24,6 +24,7 @@
 
 package sonia.scm.hgnested;
 
+import jakarta.inject.Inject;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
@@ -42,6 +43,13 @@ public class HgNestedRepositoryRequestListener
   private static final Logger logger =
     LoggerFactory.getLogger(HgNestedRepositoryRequestListener.class);
 
+  private final HgNestedConfigurationStore hgNestedConfigurationStore;
+
+  @Inject
+  public HgNestedRepositoryRequestListener(HgNestedConfigurationStore hgNestedConfigurationStore) {
+    this.hgNestedConfigurationStore = hgNestedConfigurationStore;
+  }
+
   @Override
   public boolean handleRequest(HttpServletRequest request,
                                HttpServletResponse response,
@@ -59,7 +67,7 @@ public class HgNestedRepositoryRequestListener
             repository.getName(), uri);
         }
 
-        HgNestedConfiguration config = new HgNestedConfiguration(repository);
+        HgNestedConfiguration config = hgNestedConfigurationStore.loadConfiguration(repository);
 
         if (config.isNestedRepositoryConfigured()) {
           String module = uri.substring(uri.indexOf(repoPath)
@@ -68,10 +76,10 @@ public class HgNestedRepositoryRequestListener
           module = HttpUtil.getUriWithoutStartSeperator(module);
           module = HttpUtil.getUriWithoutEndSeperator(module);
 
-          HgNestedRepository r = config.getNestedRepository(module);
+          String nestedRepositoryUrl = config.getNestedRepositoryUrl(module);
 
-          if (r != null) {
-            String url = HgNestedUtil.createUrl(request, r);
+          if (nestedRepositoryUrl != null) {
+            String url = HgNestedUtil.createUrl(request, repository, nestedRepositoryUrl);
 
             if (logger.isDebugEnabled()) {
               logger.debug("send redirect to {}", url);
@@ -95,7 +103,7 @@ public class HgNestedRepositoryRequestListener
 
   private String getRepositoryPath(Repository repository) {
     return HttpUtil.SEPARATOR_PATH +
-      repository.getType() + HttpUtil.SEPARATOR_PATH +
+      repository.getNamespace() + HttpUtil.SEPARATOR_PATH +
       repository.getName();
   }
 }

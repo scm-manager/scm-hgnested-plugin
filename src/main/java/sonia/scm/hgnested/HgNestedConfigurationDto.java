@@ -22,7 +22,32 @@
  * SOFTWARE.
  */
 
-import { ConfigurationBinder } from "@scm-manager/ui-components";
-import HgNestedConfiguration from "./HgNestedConfiguration";
+package sonia.scm.hgnested;
 
-ConfigurationBinder.bindRepositorySetting("/hg-nested", "scm-hgnested-plugin.link", "hgNestedConfiguration", HgNestedConfiguration);
+import de.otto.edison.hal.HalRepresentation;
+import de.otto.edison.hal.Links;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@NoArgsConstructor
+@Data
+@EqualsAndHashCode(callSuper = false)
+public class HgNestedConfigurationDto extends HalRepresentation {
+  @NotNull
+  private List<@Valid HgNestedConfigurationEntryDto> subRepositoryEntries;
+
+  public HgNestedConfigurationDto(HgNestedConfiguration configuration, Links links) {
+    super(links);
+    this.subRepositoryEntries = new ArrayList<>();
+    configuration.getNestedRepositoryMap().forEach((path, url) -> {
+      HgNestedConfigurationEntryDto entry = new HgNestedConfigurationEntryDto(path, url);
+      subRepositoryEntries.add(entry);
+    });
+  }
+}

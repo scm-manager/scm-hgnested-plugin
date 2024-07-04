@@ -22,7 +22,33 @@
  * SOFTWARE.
  */
 
-import { ConfigurationBinder } from "@scm-manager/ui-components";
-import HgNestedConfiguration from "./HgNestedConfiguration";
+package sonia.scm.hgnested;
 
-ConfigurationBinder.bindRepositorySetting("/hg-nested", "scm-hgnested-plugin.link", "hgNestedConfiguration", HgNestedConfiguration);
+import jakarta.inject.Inject;
+import sonia.scm.repository.Repository;
+import sonia.scm.store.ConfigurationStore;
+import sonia.scm.store.ConfigurationStoreFactory;
+
+public class HgNestedConfigurationStore {
+
+  private final ConfigurationStoreFactory storeFactory;
+
+  @Inject
+  public HgNestedConfigurationStore(ConfigurationStoreFactory storeFactory) {
+    this.storeFactory = storeFactory;
+  }
+
+  public HgNestedConfiguration loadConfiguration(Repository repository) {
+    ConfigurationStore<HgNestedConfiguration> store = createStore(repository);
+    return store.getOptional().orElseGet(HgNestedConfiguration::new);
+  }
+
+  private ConfigurationStore<HgNestedConfiguration> createStore(Repository repository) {
+    return storeFactory.withType(HgNestedConfiguration.class).withName("hgnested").forRepository(repository).build();
+  }
+
+  public void storeConfiguration(Repository repository, HgNestedConfiguration configuration) {
+    ConfigurationStore<HgNestedConfiguration> store = createStore(repository);
+    store.set(configuration);
+  }
+}

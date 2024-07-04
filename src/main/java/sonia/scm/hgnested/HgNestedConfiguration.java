@@ -24,35 +24,32 @@
 
 package sonia.scm.hgnested;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import sonia.scm.repository.Repository;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import sonia.scm.util.Util;
+import sonia.scm.xml.XmlMapStringAdapter;
 
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.Map;
 
+@XmlRootElement(name = "hgnested")
+@XmlAccessorType(XmlAccessType.FIELD)
 public class HgNestedConfiguration {
 
-  public static final String PROPERTY_HGNESTED = "hgnested.repositories";
+  @XmlJavaTypeAdapter(XmlMapStringAdapter.class)
+  private final Map<String, String> nestedRepositoryMap;
 
-  private Map<String, HgNestedRepository> nestedRepositoryMap;
-
-  private static final Logger logger =
-    LoggerFactory.getLogger(HgNestedConfiguration.class);
-
-  public HgNestedConfiguration(Repository repository) {
-    String value = repository.getProperty(PROPERTY_HGNESTED);
-
-    if (Util.isNotEmpty(value)) {
-      parseNestedRepositories(value);
-    } else if (logger.isDebugEnabled()) {
-      logger.debug("no nested repositories are defined for repository {}",
-        repository.getName());
-    }
+  public HgNestedConfiguration() {
+    this(Collections.emptyMap());
   }
 
-  public HgNestedRepository getNestedRepository(String path) {
+  public HgNestedConfiguration(Map<String, String> nestedRepositoryMap) {
+    this.nestedRepositoryMap = nestedRepositoryMap;
+  }
+
+  public String getNestedRepositoryUrl(String path) {
     return nestedRepositoryMap.get(path);
   }
 
@@ -60,37 +57,7 @@ public class HgNestedConfiguration {
     return Util.isNotEmpty(nestedRepositoryMap);
   }
 
-  private void parseNestedRepositories(String value) {
-    String[] values = value.split(";");
-
-    for (String v : values) {
-      parseNestedRepository(v);
-    }
-  }
-
-  private void parseNestedRepository(String value) {
-    value = value.trim();
-
-    String[] values = value.split("=");
-
-    if (values.length != 2) {
-      if (logger.isWarnEnabled()) {
-        logger.warn("wrong length detected");
-      }
-    } else {
-      if (nestedRepositoryMap == null) {
-        nestedRepositoryMap = new HashMap<>();
-      }
-
-      String name = values[0].trim();
-      String url = values[1].trim();
-      HgNestedRepository repo = new HgNestedRepository(name, url);
-
-      if (logger.isDebugEnabled()) {
-        logger.debug("append nested repository: {}", repo);
-      }
-
-      nestedRepositoryMap.put(name, repo);
-    }
+  public Map<String, String> getNestedRepositoryMap() {
+    return Collections.unmodifiableMap(nestedRepositoryMap);
   }
 }

@@ -24,32 +24,20 @@
 
 package sonia.scm.hgnested;
 
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-import java.util.List;
-
-@XmlRootElement(name = "repositories")
-@XmlAccessorType(XmlAccessType.FIELD)
-public class HgNestedRepositories {
-
-  @XmlElement(name = "repository")
-  private List<HgNestedRepository> repositories;
-
-  public HgNestedRepositories() {
-  }
-
-  public HgNestedRepositories(List<HgNestedRepository> repositories) {
-    this.repositories = repositories;
-  }
-
-  public List<HgNestedRepository> getRepositories() {
-    return repositories;
-  }
-
-  public void setRepositories(List<HgNestedRepository> repositories) {
-    this.repositories = repositories;
-  }
+@NoArgsConstructor
+@AllArgsConstructor
+@Data
+public class HgNestedConfigurationEntryDto {
+  @NotNull
+  @NotEmpty
+  private String path;
+  @NotNull
+  @NotEmpty
+  private String url;
 }

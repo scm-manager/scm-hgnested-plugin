@@ -29,6 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sonia.scm.repository.FileObject;
 import sonia.scm.repository.FileObjectPreProcessor;
+import sonia.scm.repository.Repository;
 import sonia.scm.repository.SubRepository;
 
 public class HgNestedFileObjectPreProcessor implements FileObjectPreProcessor {
@@ -38,37 +39,39 @@ public class HgNestedFileObjectPreProcessor implements FileObjectPreProcessor {
 
   private final HgNestedConfiguration configuration;
   private final HttpServletRequest request;
+  private final Repository repository;
 
-  public HgNestedFileObjectPreProcessor(HgNestedConfiguration configuration,
+  public HgNestedFileObjectPreProcessor(Repository repository, HgNestedConfiguration configuration,
                                         HttpServletRequest request) {
+    this.repository = repository;
     this.configuration = configuration;
     this.request = request;
   }
 
   @Override
-  public void process(FileObject fo) {
+  public void process(FileObject fileObject) {
     if (configuration.isNestedRepositoryConfigured()) {
       if (logger.isTraceEnabled()) {
         logger.trace("check file object {} for nested repository",
-          fo.getPath());
+          fileObject.getPath());
       }
 
-      SubRepository sub = fo.getSubRepository();
+      SubRepository sub = fileObject.getSubRepository();
 
       if (sub != null) {
         if (logger.isTraceEnabled()) {
           logger.trace("check sub repository {} for nested repository",
-            fo.getPath());
+            fileObject.getPath());
         }
 
-        HgNestedRepository repository =
-          configuration.getNestedRepository(fo.getPath());
+        String nestedRepositoryUrl =
+          configuration.getNestedRepositoryUrl(fileObject.getPath());
 
-        if (repository != null) {
-          String url = HgNestedUtil.createUrl(request, repository);
+        if (nestedRepositoryUrl != null) {
+          String url = HgNestedUtil.createUrl(request, repository, nestedRepositoryUrl);
 
           if (logger.isDebugEnabled()) {
-            logger.debug("set sub repsoitory url to {}", url);
+            logger.debug("set sub repository url to {}", url);
           }
 
           sub.setRepositoryUrl(url);

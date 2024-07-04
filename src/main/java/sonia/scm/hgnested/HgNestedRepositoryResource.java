@@ -25,63 +25,96 @@
 package sonia.scm.hgnested;
 
 import com.google.inject.Inject;
+import de.otto.edison.hal.Link;
+import de.otto.edison.hal.Links;
+import jakarta.inject.Provider;
+import jakarta.validation.Valid;
+import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.GET;
+import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
+import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
-import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
-import jakarta.ws.rs.core.Response;
+import sonia.scm.ContextEntry;
+import sonia.scm.NotFoundException;
+import sonia.scm.api.v2.resources.LinkBuilder;
+import sonia.scm.api.v2.resources.ScmPathInfoStore;
+import sonia.scm.repository.NamespaceAndName;
 import sonia.scm.repository.Repository;
 import sonia.scm.repository.RepositoryManager;
-import sonia.scm.search.SearchRequest;
-import sonia.scm.search.SearchUtil;
-import sonia.scm.util.Util;
+import sonia.scm.repository.RepositoryPermissions;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-@Path("plugins/hgnested/repositories")
+@Path("v2/hgnested")
 public class HgNestedRepositoryResource implements HgNested {
 
   private final RepositoryManager repositoryManager;
+  private final HgNestedConfigurationStore configurationStore;
+  private final Provider<ScmPathInfoStore> scmPathInfoStore;
+
 
   @Inject
-  public HgNestedRepositoryResource(RepositoryManager repositoryManager) {
+  public HgNestedRepositoryResource(RepositoryManager repositoryManager, HgNestedConfigurationStore configurationStore, Provider<ScmPathInfoStore> scmPathInfoStore) {
     this.repositoryManager = repositoryManager;
+    this.configurationStore = configurationStore;
+    this.scmPathInfoStore = scmPathInfoStore;
   }
 
+
   @GET
-  @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
-  public Response getRepositories(
-    @QueryParam("repository") String currentRepository,
-    @QueryParam("query") String query) {
-    List<HgNestedRepository> nestedRepositories =
-      new ArrayList<>();
-    Collection<Repository> repositories = repositoryManager.getAll();
-    SearchRequest request = null;
+  @Path("{namespace}/{name}")
+  @Produces(MediaType.APPLICATION_JSON)
+  public HgNestedConfigurationDto getConfiguration(
+    @PathParam("namespace") String namespace,
+    @PathParam("name") String name) {
 
-    if (Util.isNotEmpty(query)) {
-      request = new SearchRequest(query, true);
+    NamespaceAndName namespaceAndName = new NamespaceAndName(namespace, name);
+
+    Repository repository = repositoryManager.get(namespaceAndName);
+
+    if (repository == null) {
+      throw NotFoundException.notFound(ContextEntry.ContextBuilder.entity(namespaceAndName));
     }
 
-    for (Repository repository : repositories) {
-      if (TYPE.equals(repository.getType())
-        && (Util.isEmpty(currentRepository)
-        || !currentRepository.equals(repository.getName()))) {
-        if (request != null) {
-          if (SearchUtil.matchesOne(request, repository.getName(),
-            repository.getDescription(),
-            repository.getContact())) {
-            nestedRepositories.add(
-              new HgNestedRepository(repository.getName()));
-          }
-        } else {
-          nestedRepositories.add(new HgNestedRepository(repository.getName()));
-        }
-      }
+    HgNestedConfiguration configuration = configurationStore.loadConfiguration(repository);
+
+    LinkBuilder linkBuilder = new LinkBuilder(scmPathInfoStore.get().get(), HgNestedRepositoryResource.class);
+    String selfLinkUrl = linkBuilder.method("getConfiguration").parameters(repository.getNamespace(), repository.getName()).href();
+
+    Links.Builder builder = new Links.Builder();
+    builder.self(selfLinkUrl);
+
+    if (RepositoryPermissions.custom("hgNestedConfiguration", repository).isPermitted()) {
+      String updateLinkUrl = linkBuilder.method("updateConfiguration").parameters(repository.getNamespace(), repository.getName()).href();
+      builder.single(Link.link("update", updateLinkUrl));
     }
 
-    return Response.ok(new HgNestedRepositories(nestedRepositories)).build();
+    return new HgNestedConfigurationDto(configuration, builder.build());
+  }
+
+  @PUT
+  @Path("{namespace}/{name}")
+  @Consumes(MediaType.APPLICATION_JSON)
+  public void updateConfiguration(@PathParam("namespace") String namespace, @PathParam("name") String name, @Valid HgNestedConfigurationDto configurationDto) {
+    List<HgNestedConfigurationEntryDto> entryDtoList = configurationDto.getSubRepositoryEntries();
+    NamespaceAndName namespaceAndName = new NamespaceAndName(namespace, name);
+
+    Repository repository = repositoryManager.get(namespaceAndName);
+
+    if (repository == null) {
+      throw NotFoundException.notFound(ContextEntry.ContextBuilder.entity(namespaceAndName));
+    }
+
+    RepositoryPermissions.custom("hgNestedConfiguration", repository).check();
+
+    Map<String, String> nestedRepositories = new HashMap<>();
+
+    entryDtoList.forEach((entryDto) -> nestedRepositories.put(entryDto.getPath(), entryDto.getUrl()));
+    HgNestedConfiguration configuration = new HgNestedConfiguration(nestedRepositories);
+    configurationStore.storeConfiguration(repository, configuration);
   }
 }

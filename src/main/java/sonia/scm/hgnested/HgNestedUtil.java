@@ -25,6 +25,7 @@
 package sonia.scm.hgnested;
 
 import jakarta.servlet.http.HttpServletRequest;
+import sonia.scm.repository.Repository;
 
 public class HgNestedUtil {
 
@@ -32,10 +33,9 @@ public class HgNestedUtil {
   }
 
   public static String createUrl(HttpServletRequest request,
-                                 HgNestedRepository r) {
-    String url = r.getUrl();
+                                 Repository repository, String nestedRepositoryUrl) {
 
-    if (!url.startsWith("http")) {
+    if (!nestedRepositoryUrl.startsWith("http")) {
       StringBuilder buffer = new StringBuilder(request.getScheme());
 
       buffer
@@ -43,13 +43,15 @@ public class HgNestedUtil {
         .append(request.getServerName())
         .append(":")
         .append(request.getServerPort())
-        .append(request.getContextPath()).append("/hg");
+        .append(request.getContextPath())
+        .append("/repo/");
 
-      if (!url.startsWith("/")) {
-        buffer.append("/");
+      if (!nestedRepositoryUrl.contains("/")) {
+          buffer.append(repository.getNamespace());
+          buffer.append("/");
       }
 
-      buffer.append(url);
+      buffer.append(nestedRepositoryUrl);
 
       String query = request.getQueryString();
 
@@ -57,9 +59,9 @@ public class HgNestedUtil {
         buffer.append("?").append(query);
       }
 
-      url = buffer.toString();
+      nestedRepositoryUrl = buffer.toString();
     }
 
-    return url;
+    return nestedRepositoryUrl;
   }
 }

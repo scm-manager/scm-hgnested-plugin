@@ -24,41 +24,33 @@
 
 package sonia.scm.hgnested;
 
-import com.google.inject.Inject;
-import com.google.inject.Provider;
-import jakarta.servlet.http.HttpServletRequest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import jakarta.inject.Inject;
+import jakarta.inject.Provider;
+import sonia.scm.api.v2.resources.Enrich;
+import sonia.scm.api.v2.resources.HalAppender;
+import sonia.scm.api.v2.resources.HalEnricher;
+import sonia.scm.api.v2.resources.HalEnricherContext;
+import sonia.scm.api.v2.resources.LinkBuilder;
+import sonia.scm.api.v2.resources.ScmPathInfoStore;
 import sonia.scm.plugin.Extension;
-import sonia.scm.repository.FileObjectPreProcessor;
-import sonia.scm.repository.FileObjectPreProcessorFactory;
 import sonia.scm.repository.Repository;
 
 @Extension
-public class HgNestedFileObjectPreProcessorFactory
-  implements FileObjectPreProcessorFactory {
-
-  private static final Logger logger =
-    LoggerFactory.getLogger(HgNestedFileObjectPreProcessorFactory.class);
-  private final Provider<HttpServletRequest> requestProvider;
-  private final HgNestedConfigurationStore hgNestedConfigurationStore;
-
+@Enrich(Repository.class)
+public class HgNestedConfigurationEnricher implements HalEnricher {
+  private final Provider<ScmPathInfoStore> scmPathInfoStore;
 
   @Inject
-  public HgNestedFileObjectPreProcessorFactory(
-    Provider<HttpServletRequest> requestProvider, HgNestedConfigurationStore hgNestedConfigurationStore) {
-    this.requestProvider = requestProvider;
-    this.hgNestedConfigurationStore = hgNestedConfigurationStore;
+  public HgNestedConfigurationEnricher(Provider<ScmPathInfoStore> scmPathInfoStore) {
+    this.scmPathInfoStore = scmPathInfoStore;
   }
 
   @Override
-  public FileObjectPreProcessor createPreProcessor(Repository repository) {
-    if (logger.isTraceEnabled()) {
-      logger.trace("create file object pre processor for repository {}", repository);
+  public void enrich(HalEnricherContext context, HalAppender appender) {
+    Repository repository = context.oneRequireByType(Repository.class);
+    if (repository.getType().equals("hg")) {
+      LinkBuilder linkBuilder = new LinkBuilder(scmPathInfoStore.get().get(), HgNestedRepositoryResource.class);
+      appender.appendLink("hgNestedConfiguration", linkBuilder.method("getConfiguration").parameters(repository.getNamespace(), repository.getName()).href());
     }
-
-    HgNestedConfiguration config = hgNestedConfigurationStore.loadConfiguration(repository);
-
-    return new HgNestedFileObjectPreProcessor(repository, config, requestProvider.get());
   }
 }

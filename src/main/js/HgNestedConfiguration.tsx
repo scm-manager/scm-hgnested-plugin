@@ -22,36 +22,34 @@
  * SOFTWARE.
  */
 
-package sonia.scm.hgnested;
+import React from "react";
+import {FC} from "react";
+import { ConfigurationForm, Subtitle, Form } from "@scm-manager/ui-core";
+import {useTranslation} from "react-i18next";
 
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlRootElement;
+const HgNestedConfigurationForm: FC<{link: string}> = ({link}) => {
+  const [t] = useTranslation("plugins");
 
-@XmlRootElement(name = "repository")
-@XmlAccessorType(XmlAccessType.FIELD)
-public class HgNestedRepository {
+  return (
+    <ConfigurationForm
+    link={link}
+    translationPath={["plugins", "scm-hgnested-plugin.config"]}>
+      <Subtitle>{t("scm-hgnested-plugin.config.title")}</Subtitle>
+      <p>{t("scm-hgnested-plugin.config.description")}</p>
+      <Form.ListContext name="subRepositoryEntries">
+      <Form.Table withDelete>
+        <Form.Table.Column name="path"></Form.Table.Column>
+        <Form.Table.Column name="url"></Form.Table.Column>
+      </Form.Table>
+      <Form.AddListEntryForm defaultValues={{path: "", url: ""}}>
+        <Form.Row>
+          <Form.Input name="path" rules={{required: true}}/>
+          <Form.Input name="url" rules={{required: true}}/>
+        </Form.Row>
+      </Form.AddListEntryForm>
+      </Form.ListContext>
+    </ConfigurationForm>
+  )
+};
 
-  private String name;
-  private String url;
-
-  public HgNestedRepository() {
-  }
-
-  public HgNestedRepository(String url) {
-    this.url = url;
-  }
-
-  public HgNestedRepository(String name, String url) {
-    this.name = name;
-    this.url = url;
-  }
-
-  public String getName() {
-    return name;
-  }
-
-  public String getUrl() {
-    return url;
-  }
-}
+export default HgNestedConfigurationForm;

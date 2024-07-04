@@ -1,5 +1,29 @@
 {
   "scm-hgnested-plugin": {
-
+    "link": "Subrepository Konfiguration",
+    "config": {
+      "title": "Subrepository Konfiguration",
+      "description": "Diese Konfiguration ermöglicht die Zuordnung eines Subrepositorys innerhalb des aktuellen Repositorys zu einem bestimmten Ziel. Dies kann eine URL, Namespace und Name eines Repositorys oder einfach der Name des Repositorys sein. Wenn nur der Name angegeben wird, wird der Namespace des aktuellen Repositorys verwendet.",
+      "subRepositoryEntries": {
+        "path": {
+          "label": "Pfad des Subrepositorys"
+        },
+        "url": {
+          "label": "Subrepository"
+        },
+        "action": {
+          "label": "Subrepository Verknüpfung löschen"
+        },
+        "title": "Neues Subrepository hinzufügen"
+      }
+    }
+  },
+  "verbs": {
+    "repository": {
+      "hgNestedConfiguration": {
+        "displayName": "Mercurial Subrepositories konfigurieren",
+        "description": "Darf Mercurial Subrepositories konfigurieren"
+      }
+    }
   }
 }
