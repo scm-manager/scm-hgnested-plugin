@@ -54,7 +54,7 @@ class HgNestedRepositoryResourceTest {
 
   RestDispatcher dispatcher = new RestDispatcher();
   JsonMockHttpResponse response = new JsonMockHttpResponse();
-  String domain = "http://localhost:8080";
+  String domain = "http://localhost:8080/";
 
   @Mock
   private RepositoryManager repositoryManager;
@@ -114,9 +114,9 @@ class HgNestedRepositoryResourceTest {
 
         JsonNode contentAsJson = response.getContentAsJson();
         assertThat(contentAsJson.get("_links").get("self").get("href").asText())
-          .isEqualTo(domain + "/v2/hgnested/hitchhiker/HeartOfGold");
+          .isEqualTo(domain + "v2/hgnested/hitchhiker/HeartOfGold");
         assertThat(contentAsJson.get("_links").get("update").get("href").asText())
-          .isEqualTo(domain + "/v2/hgnested/hitchhiker/HeartOfGold");
+          .isEqualTo(domain + "v2/hgnested/hitchhiker/HeartOfGold");
       }
 
       @Test
@@ -180,7 +180,7 @@ class HgNestedRepositoryResourceTest {
 
         JsonNode contentAsJson = response.getContentAsJson();
         assertThat(contentAsJson.get("_links").get("self").get("href").asText())
-          .isEqualTo(domain + "/v2/hgnested/hitchhiker/HeartOfGold");
+          .isEqualTo(domain + "v2/hgnested/hitchhiker/HeartOfGold");
         assertThat(contentAsJson.get("_links").asText()).doesNotContain("update");
       }
 

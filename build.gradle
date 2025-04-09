@@ -25,7 +25,7 @@ dependencies {
 }
 
 scmPlugin {
-  scmVersion = "3.2.2"
+  scmVersion = "3.7.0"
   displayName = "hg-nested"
   description = "This plugin allows the creation of an alias for nested mercurial repositories."
   author = "Cloudogu GmbH"

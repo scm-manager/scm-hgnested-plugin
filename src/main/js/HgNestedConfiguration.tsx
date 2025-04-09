@@ -14,34 +14,38 @@
  * along with this program. If not, see https://www.gnu.org/licenses/.
  */
 
-import React from "react";
-import {FC} from "react";
-import { ConfigurationForm, Subtitle, Form } from "@scm-manager/ui-core";
-import {useTranslation} from "react-i18next";
+import React, { FC } from "react";
+import { useTranslation } from "react-i18next";
+import { ConfigurationForm, Subtitle, Form, useDocumentTitleForRepository } from "@scm-manager/ui-core";
+import { Repository } from "@scm-manager/ui-types";
 
-const HgNestedConfigurationForm: FC<{link: string}> = ({link}) => {
+type Props = {
+  link: string;
+  repository: Repository;
+};
+
+const HgNestedConfigurationForm: FC<Props> = ({ link, repository }) => {
   const [t] = useTranslation("plugins");
+  useDocumentTitleForRepository(repository, t("scm-hgnested-plugin.config.title"));
 
   return (
-    <ConfigurationForm
-    link={link}
-    translationPath={["plugins", "scm-hgnested-plugin.config"]}>
+    <ConfigurationForm link={link} translationPath={["plugins", "scm-hgnested-plugin.config"]}>
       <Subtitle>{t("scm-hgnested-plugin.config.title")}</Subtitle>
       <p>{t("scm-hgnested-plugin.config.description")}</p>
       <Form.ListContext name="subRepositoryEntries">
-      <Form.Table withDelete>
-        <Form.Table.Column name="path"></Form.Table.Column>
-        <Form.Table.Column name="url"></Form.Table.Column>
-      </Form.Table>
-      <Form.AddListEntryForm defaultValues={{path: "", url: ""}}>
-        <Form.Row>
-          <Form.Input name="path" rules={{required: true}}/>
-          <Form.Input name="url" rules={{required: true}}/>
-        </Form.Row>
-      </Form.AddListEntryForm>
+        <Form.Table withDelete>
+          <Form.Table.Column name="path"></Form.Table.Column>
+          <Form.Table.Column name="url"></Form.Table.Column>
+        </Form.Table>
+        <Form.AddListEntryForm defaultValues={{ path: "", url: "" }}>
+          <Form.Row>
+            <Form.Input name="path" rules={{ required: true }} />
+            <Form.Input name="url" rules={{ required: true }} />
+          </Form.Row>
+        </Form.AddListEntryForm>
       </Form.ListContext>
     </ConfigurationForm>
-  )
+  );
 };
 
 export default HgNestedConfigurationForm;
