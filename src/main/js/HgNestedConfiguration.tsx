@@ -16,17 +16,14 @@
 
 import React, { FC } from "react";
 import { useTranslation } from "react-i18next";
-import { ConfigurationForm, Subtitle, Form, useDocumentTitleForRepository } from "@scm-manager/ui-core";
-import { Repository } from "@scm-manager/ui-types";
+import { ConfigurationForm, Subtitle, Form } from "@scm-manager/ui-core";
 
 type Props = {
   link: string;
-  repository: Repository;
 };
 
-const HgNestedConfigurationForm: FC<Props> = ({ link, repository }) => {
+const HgNestedConfigurationForm: FC<Props> = ({ link }) => {
   const [t] = useTranslation("plugins");
-  useDocumentTitleForRepository(repository, t("scm-hgnested-plugin.config.title"));
 
   return (
     <ConfigurationForm link={link} translationPath={["plugins", "scm-hgnested-plugin.config"]}>
