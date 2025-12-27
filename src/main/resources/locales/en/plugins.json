@@ -2,27 +2,27 @@
   "scm-hgnested-plugin": {
     "link": "Subrepository Configuration",
     "config": {
-      "title": "Subrepository Configuration",
-      "description": "This configuration allows to map a subrepository within the current repository to a given destination. This can be a URL, namespace and name of a repository or simply the name of the repository. When only the name is given, the namespace of the current repository will be used.",
+      "title": "Subrepository configuration",
+      "description": "This configuration allows to map a subrepository within the current repository to a given destination. This can be a URL, a combination of namespace and name of a repository, or simply the name of the repository. If only the name is given, the namespace of the current repository will be used.",
       "subRepositoryEntries": {
         "path": {
-          "label": "Path of Subrepository"
+          "label": "Path of subrepository"
         },
         "url": {
           "label": "Subrepository"
         },
         "action": {
-          "label": "Delete Subrepository Link"
+          "label": "Delete subrepository link"
         },
-        "title": "Add new Subrepository"
+        "title": "Add new subrepository"
       }
     }
   },
   "verbs": {
     "repository": {
       "hgNestedConfiguration": {
-        "displayName": "configure Mercurial Subrepositories",
-        "description": "May configure Mercurial Subrepositories"
+        "displayName": "configure Mercurial subrepositories",
+        "description": "May configure Mercurial subrepositories."
       }
     }
   }
