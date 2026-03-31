@@ -4,7 +4,7 @@
   </a>
 </p>
 <h1 align="center">
-  hg-nested
+  hg-nested Plugin
 </h1>
 
 With the hg-nested-plugin, the SCM-Manager supports the management of hg subrepositories. This plugin allows the creation of an alias for nested mercurial repositories. For more information have a look at this [GitHub issue](https://github.com/scm-manager/scm-manager/issues/67).
